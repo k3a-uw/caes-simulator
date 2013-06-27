@@ -5,7 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 import components.Component;
-
+/**
+ * A class to loop through the configuration file and instantiate the objects
+ * laid out in the config.xml file.  Uses config.xsd for the schema.
+ * @author Shane Kwon
+ */
 public class MainControl
 {
 	private SimulationDataStructure my_data_structure;

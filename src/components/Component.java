@@ -4,7 +4,7 @@ import error.ValueOverflowException;
 /**
  * Component class
  * 
- * @author Kenny
+ * @author Kenny Kong
  *
  */
 

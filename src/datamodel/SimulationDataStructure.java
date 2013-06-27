@@ -7,8 +7,9 @@ import java.util.Map.Entry;
 import components.Component;
 
 /**
- * A STUB TO HOLD THE SIMULATION DATA STRUCTURE THIS WILL BE CREATED BY THE
- * LOADER.
+ * @author Kevin E. Anderson
+ * @modifier Shane Kwon
+ * @version 0
  */
 public class SimulationDataStructure
 {

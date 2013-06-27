@@ -4,7 +4,7 @@ import error.ValueOverflowException;
 /**
  * Stock class
  * 
- * @author Kenny
+ * @author Kenny Kong
  *
  */
 public class Stock extends Component {

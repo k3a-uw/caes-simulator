@@ -3,7 +3,7 @@ package error;
 public class InvalidXMLException extends Exception
 {
 	/**
-	 * Serializable for portability if needed in future.
+	 * @author Kevin E. Anderson
 	 */
 	private static final long serialVersionUID = 1L;
 

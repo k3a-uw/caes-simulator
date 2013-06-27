@@ -23,7 +23,8 @@ import datamodel.SimulationDataStructure;
 /**
  * Simulator UI
  * 
- * @author Kenny
+ * @author Kenny Kong
+ * 
  *
  */
 public class Simulator implements ActionListener
