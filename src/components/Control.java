@@ -170,9 +170,11 @@ public class Control extends Component {
 			//System.out.println(my_function);
 			for (int i = 0; i < myParameters.size(); i++) {
 				function = function.replace("{" + myParameters.get(i).getName() + "}",
-						"" + myParameters.get(i).getPreviousValue());
+						"" + String.format("%.20f", myParameters.get(i).getPreviousValue()));
 			}
-			//System.out.println(function);
+			
+			System.out.println(function);
+			
 			try
 			{
 				//System.out.println(Double.parseDouble(evaluator.evaluate(function)));

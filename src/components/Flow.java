@@ -177,10 +177,19 @@ public class Flow extends Component
 		try
 		{
 			source.setCurrentValue(source.getPreviousValue() - val);
+		} catch (ValueOverflowException e)
+		{
+			System.out.println("An error occurred in " + getName() + " when setting source: " + source.getName() + 
+				 " to " + (source.getPreviousValue() - val));
+		}
+		
+		try
+		{
 			sink.setCurrentValue(sink.getPreviousValue() + val);
 		} catch (ValueOverflowException e)
 		{
-		 System.out.println("An error happened");
+			System.out.println("An error occurred in " + getName() + " when setting sink: " + sink.getName() + 
+					 " to " + (sink.getPreviousValue() - val));
 		}
 
 	}
