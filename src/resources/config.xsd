@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="resources/config.xsd">  
+  <!-- ALL ELEMENTS EXIST UNDER THE ROOT OF A SYSTEM -->
+  <xs:element name="system" type="aSystem" />
+
+  <!-- A SYSTEM HAS SOME COMPONENTS AND A FEW ATTRIBUTES -->
+  <xs:complexType name="aSystem">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="stock"      type="aStock"     />
+      <xs:element name="cloud"  	type="aCloud"      />
+      <xs:element name="flow"       type="aFlow"      />
+      <xs:element name="control"    type="aControl"   />
+      <xs:element name="subsystem"  type="aSystem"    />
+      <xs:element name="interface"  type="aInterface" />
+    </xs:sequence>
+    <xs:attribute name="id"           type="xs:string" use="required" />
+    <xs:attribute name="name"         type="xs:string" use="required" />
+    <xs:attribute name="type"         type="xs:string" use="optional" />
+    <xs:attribute name="timeSteps"    type="xs:string" use="required" />
+  </xs:complexType>       
+    
+  <!-- DEFINITION FOR A STOCK -->
+  <xs:complexType name="aStock">
+  	<xs:sequence></xs:sequence>
+  	<xs:attribute name="id" type="xs:string" use="required" />
+    <xs:attribute name="name" type="xs:string" />
+    <xs:attribute name="units" type="xs:string" use="optional" />
+  	<xs:attribute name="max_level" type="xs:string" use="optional" />
+  	<xs:attribute name="cur_level" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <!-- DEFINITION FOR A CLOUD -->
+  <xs:complexType name="aCloud">
+  	<xs:attribute name="id" type="xs:string" use="required" />
+    <xs:attribute name="name" type="xs:string" />
+    <xs:attribute name="units" type="xs:string" use="optional" />
+  	<xs:attribute name="cur_level" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <!-- DEFINITION FOR A FLOW -->
+  <xs:complexType name="aFlow">
+  	<xs:attribute name="id" type="xs:string" use="required" />
+  	<xs:attribute name="src_id" type="xs:string" use="required" />
+  	<xs:attribute name="sink_id" type="xs:string" use="required" />
+  	<xs:attribute name="type" type="xs:string" use="optional" />
+  	<xs:attribute name="max_capacity" type="xs:string" use="optional" />
+  	<xs:attribute name="cur_level" type="xs:string" use="optional" />
+  	<xs:attribute name="controlName" type="xs:string" />
+  </xs:complexType>
+
+  <!-- DEFINITION FOR A CONTROL -->
+  <xs:complexType name="aControl">
+  	<xs:attribute name="id" type="xs:string" use="required" />
+  	<xs:attribute name="name" type="xs:string"></xs:attribute>
+  	<xs:attribute name="function" type="xs:string" use="required" />
+  	<xs:attribute name="type" type="xs:string" use="optional" />
+  	<xs:attribute name="initialvalue" type="xs:string" />
+  </xs:complexType>
+
+  <!-- DEFINITION FOR A SENSOR -->
+    
+  <!-- DEFINITION FOR AN INTERFACE -->
+</xs:schema>

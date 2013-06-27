@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<xsi:system id="0" name="PopulationModel" type="Data" xmlns:xsi="System" timeSteps="2" xsi:schemaLocation="aSystem config.xsd ">
+    <xsi:stock id="S0.1" name="Population" units="People" max_level="0" cur_level="1000" />
+    <xsi:flow id="F0.1" name="BirthFlow" max_capacity="0.0" cur_level="0.0" src_id="PotentialPeople" sink_id="Population" control_name="BirthFlowValve"/>
+    <xsi:flow id="F0.2" name="DeathFlow" max_capacity="0.0"
+    	cur_level="0.0" src_id="Population" sink_id="Cemetary"
+    	control_name="DeathFlowValve" />
+    <xsi:control id="C0.1" name="FertilityRateDecrement" function="{Population},&gt;,{ThreshFertility},1,0.99" type="conditional" initialvalue="0.0" />
+    <xsi:control id="C0.2" name="FertilityRate" function="{FertilityRate} * {FertilityRateDecrement}" type="function" initialvalue="0.07" />
+    <xsi:control id="C0.3" name="Females" function="{Population} * {FemaleFraction}" type="function" initialvalue="0.0" />
+    <xsi:control id="C0.4" name="FemaleFraction" function="0.5" type="constant"	initialvalue="0.5" />
+    <xsi:control id="C0.5" name="MatureFemales"	function="{Females} * {FractionOfFemaleMature}" type="function" initialvalue="0.0" />
+    <xsi:control id="C0.6" name="FractionOfFemaleMature" function="0.353" type="constant" initialvalue="0.353" />
+    <xsi:control id="C0.8" name="MortalityRate" function="{MortalityRate} * {MortalityRateIncrease}" type="function" initialvalue="0.06" />
+    <xsi:control id="C0.9" name="MortalityRateIncrease"	function="{Population},&gt;,{ThreshMortality},1,1.01" type="conditional" initialvalue="0.0" />
+    <xsi:control id="C0.10" name="DeathFlowValve"	function="{Population} * {MortalityRate}" type="function" initialvalue="0.0" />
+    <xsi:control id="C0.7" name="BirthFlowValve"	function="{FertilityRate} * {MatureFemales}" type="function" initialvalue="0.0" />
+    <xsi:control id="C0.12" name="ThreshMortality" function="100000" type="constant"	initialvalue="100000" />
+    <xsi:control id="C0.11" name="ThreshFertility" function="0.5" type="constant"	initialvalue="0.5" />
+    <xsi:cloud id="C0.1.1" units="people" name="PotentialPeople" cur_level="1000" />
+    <xsi:cloud id="C0.1.2" units="people" name="Cemetary" cur_level="1000" />
+</xsi:system>
