@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://24.19.117.165/xml/input.xsd"
+  xmlns:sc="http://24.19.117.165/xml/input.xsd"
+  elementFormDefault="qualified">
+
+<xsd:annotation>
+	<xsd:documentation>
+	  This XMLS schema is used to describe input to a data driven model in the CAES-Simulator
+	  application.  This will also serve as the schema for exported output to initiate a model
+	  with values based on an output.  This will allow a user to run a simulation for a while
+	  and then allow the user to start the model from where it left off.
+	  Author: Kevin Anderson (k3a@uw.edu)
+	</xsd:documentation>
+</xsd:annotation>  
+  <!-- ALL ELEMENTS EXIST UNDER THE ROOT OF A SYSTEM -->
+  
+  <xsd:element name="system" type="sc:aSystem" />
+  
+  
+
+  <!-- A SYSTEM HAS SOME COMPONENTS AND A FEW ATTRIBUTES -->
+  <xsd:complexType name="aSystem">
+  	<xsd:choice minOccurs="0" maxOccurs="unbounded">
+  		<xsd:element name="step" type="sc:aStep" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:choice>
+    <xsd:attribute name="id"           type="xsd:string" use="required" />
+    <xsd:attribute name="name"         type="xsd:string" use="required" />
+    <xsd:attribute name="lastStep"     type="xsd:integer" use="required" />
+    <xsd:attribute name="useRelativeSteps" type="xsd:boolean" use="required" /> 
+  </xsd:complexType>       
+
+  <xsd:complexType name="aStep">
+  	<xsd:choice minOccurs="0" maxOccurs="unbounded">
+  		<xsd:element name="Stock" type="sc:aStock" minOccurs="0" maxOccurs="unbounded" />
+  		<xsd:element name="Flow" type="sc:aFlow" minOccurs="0" maxOccurs="unbounded" />
+  		<xsd:element name="Control" type="sc:aControl" minOccurs="0" maxOccurs="unbounded" />
+  	</xsd:choice>
+  	<xsd:attribute name="stepValue" type="xsd:integer" use="required" />
+  	<xsd:attribute name="relative"  type="xsd:boolean" use="required" />
+  		
+  	
+  </xsd:complexType>
+    
+  <!-- DEFINITION FOR A STOCK -->
+  <xsd:complexType name="aStock">
+  	<xsd:attribute name="id" type="xsd:string" use="required" />
+    <xsd:attribute name="name" type="xsd:string" use="required" />
+    <xsd:attribute name="type" type="xsd:string" use="required" />
+  	<xsd:attribute name="value" type="xsd:string" use="required" />
+  </xsd:complexType>
+
+  <!-- DEFINITION FOR A FLOW -->
+  <xsd:complexType name="aFlow">
+  	<xsd:attribute name="id" type="xsd:string" use="required" />
+    <xsd:attribute name="name" type="xsd:string" use="required" />
+    <xsd:attribute name="type" type="xsd:string" use="required" />
+  	<xsd:attribute name="value" type="xsd:string" use="required" />
+  </xsd:complexType>
+
+  <!-- DEFINITION FOR A CONTROL -->
+  <xsd:complexType name="aControl">
+  	<xsd:attribute name="id" type="xsd:string" use="required" />
+    <xsd:attribute name="name" type="xsd:string" use="required"/>
+    <xsd:attribute name="type" type="xsd:string" use="required" />
+  	<xsd:attribute name="value" type="xsd:string" use="required" />
+  </xsd:complexType>
+</xsd:schema>
