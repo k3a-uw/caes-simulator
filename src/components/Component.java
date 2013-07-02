@@ -5,6 +5,7 @@ import error.ValueOverflowException;
  * Component class
  * 
  * @author Kenny Kong
+ * @modifier Kevin E. Anderson
  *
  */
 

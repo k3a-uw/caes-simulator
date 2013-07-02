@@ -3,6 +3,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Observable;
 
 import components.Component;
 
@@ -11,7 +12,7 @@ import components.Component;
  * @modifier Shane Kwon
  * @version 0
  */
-public class SimulationDataStructure
+public class SimulationDataStructure extends Observable
 {
 	private static Map<String, Component> my_components = new HashMap<String, Component>();
 
@@ -66,11 +67,28 @@ public class SimulationDataStructure
 			}
 			sb.append("</TD><TD>");
 			sb.append(comp.getKey());
-			sb.append("</TD><TD>" + comp.getValue().getPreviousValue());
+			sb.append("</TD><TD align=\"right\">" + String.format("%.5f",comp.getValue().getPreviousValue()));
 			sb.append("</TD></TR>");
-			
+	
 		}
 		sb.append("</TABLE>");
 		return sb.toString();
+	}
+	
+	/**
+	 * Creating a public interface to let the data structure know that it has indeed changed.
+	 * It is a little ignorant to the data inside it self.  Should probably make it observe
+	 * The objects inside of it. (that would be better design).
+	 */
+	public void setChanged(boolean value)
+	{
+		if (value)
+		{ 
+			setChanged();
+		}
+		else
+		{
+			clearChanged();
+		}
 	}
 }

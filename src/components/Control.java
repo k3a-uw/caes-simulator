@@ -173,7 +173,6 @@ public class Control extends Component {
 						"" + String.format("%.20f", myParameters.get(i).getPreviousValue()));
 			}
 			
-			System.out.println(function);
 			
 			try
 			{

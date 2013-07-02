@@ -5,6 +5,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -13,26 +15,24 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
-import components.Component;
+import javax.swing.SwingWorker;
 
 import datamodel.Loader;
 import datamodel.MainControl;
 import datamodel.SimulationDataStructure;
 
 /**
- * Simulator UI
+ * Simulator.java is the class that handles the UserInterface fo the simulator.
  * 
  * @author Kenny Kong
- * 
+ * @modifier Kevin E. Anderson
  *
  */
-public class Simulator implements ActionListener
+public class Simulator implements ActionListener, Observer
 {
+	private JLabel step_label = new JLabel();
 	private JFrame frame;
-	
 	private JLabel output_label;
-	
 	private JTextField config_file_path;
 	private JTextField input_file_path;
 	private JButton config_file_button;
@@ -69,6 +69,10 @@ public class Simulator implements ActionListener
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		frame.add(scroll_pane, BorderLayout.CENTER);
 		
+		JPanel north_panel = new JPanel();
+		north_panel.add(step_label);
+		step_label.setText("Current Step: 0");
+		frame.add(step_label, BorderLayout.NORTH);
 		JPanel file_panel = new JPanel();
 		file_panel.setLayout(new GridLayout(3, 4));
 		
@@ -105,9 +109,8 @@ public class Simulator implements ActionListener
 		step_button.addActionListener(this);
 		step_button.setEnabled(false);
 		file_panel.add(step_button);
-		
+				
 		frame.add(file_panel, BorderLayout.SOUTH);
-		
 		frame.setVisible(true);
 	}
 	
@@ -140,6 +143,7 @@ public class Simulator implements ActionListener
 				System.out.println("Loaded!");
 				loader.loadFile(new File(config_file_path.getText()));
 				my_data = loader.createDataStructure();
+				my_data.addObserver(this);
 				output_label.setText(my_data.toString());
 			}
 			catch (Exception e)
@@ -152,15 +156,35 @@ public class Simulator implements ActionListener
 			step_button.setEnabled(true);
 		}
 		else if (the_event.getSource() == start_button) {
-			my_maincontrol.start();
-			
-			output_label.setText(my_data.toString());
-			
+		// RUN THE ENGINE IN A NEW THREAD
+			SwingWorker<Void, Void> worker = new SwingWorker<Void,Void>() {
+				@Override
+				protected Void doInBackground() throws Exception {
+					my_maincontrol.run();
+					return null;
+
+				}
+			};
+			worker.execute();			
+		}
+		else if(the_event.getSource() == pause_button) {
+			my_maincontrol.pause();
+		}
+		else if(the_event.getSource() == step_button)
+		{
+			my_maincontrol.step();
 		}
 	}
 	
 	public static void main(final String... the_args)
 	{
 		new Simulator();
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		output_label.setText(my_data.toString());
+		step_label.setText("Current Step: " + my_maincontrol.getCurrentStep());
+		
 	}
 }
