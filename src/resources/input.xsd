@@ -15,14 +15,14 @@
 </xsd:annotation>  
   <!-- ALL ELEMENTS EXIST UNDER THE ROOT OF A SYSTEM -->
   
-  <xsd:element name="system" type="sc:aSystem" />
+  <xsd:element name="inputs" type="sc:inputSet" />
   
   
 
   <!-- A SYSTEM HAS SOME COMPONENTS AND A FEW ATTRIBUTES -->
-  <xsd:complexType name="aSystem">
+  <xsd:complexType name="inputSet">
   	<xsd:choice minOccurs="0" maxOccurs="unbounded">
-  		<xsd:element name="step" type="sc:aStep" minOccurs="0" maxOccurs="unbounded" />
+  		<xsd:element name="timestep" type="sc:step" minOccurs="0" maxOccurs="unbounded" />
     </xsd:choice>
     <xsd:attribute name="id"           type="xsd:string" use="required" />
     <xsd:attribute name="name"         type="xsd:string" use="required" />
@@ -30,11 +30,11 @@
     <xsd:attribute name="useRelativeSteps" type="xsd:boolean" use="required" /> 
   </xsd:complexType>       
 
-  <xsd:complexType name="aStep">
+  <xsd:complexType name="step">
   	<xsd:choice minOccurs="0" maxOccurs="unbounded">
-  		<xsd:element name="Stock" type="sc:aStock" minOccurs="0" maxOccurs="unbounded" />
-  		<xsd:element name="Flow" type="sc:aFlow" minOccurs="0" maxOccurs="unbounded" />
-  		<xsd:element name="Control" type="sc:aControl" minOccurs="0" maxOccurs="unbounded" />
+  		<xsd:element name="Stock" type="sc:stockInput" minOccurs="0" maxOccurs="unbounded" />
+  		<xsd:element name="Flow" type="sc:flowInput" minOccurs="0" maxOccurs="unbounded" />
+  		<xsd:element name="Control" type="sc:controlInput" minOccurs="0" maxOccurs="unbounded" />
   	</xsd:choice>
   	<xsd:attribute name="stepValue" type="xsd:integer" use="required" />
   	<xsd:attribute name="relative"  type="xsd:boolean" use="required" />
@@ -43,7 +43,7 @@
   </xsd:complexType>
     
   <!-- DEFINITION FOR A STOCK -->
-  <xsd:complexType name="aStock">
+  <xsd:complexType name="stockInput">
   	<xsd:attribute name="id" type="xsd:string" use="required" />
     <xsd:attribute name="name" type="xsd:string" use="required" />
     <xsd:attribute name="type" type="xsd:string" use="required" />
@@ -51,7 +51,7 @@
   </xsd:complexType>
 
   <!-- DEFINITION FOR A FLOW -->
-  <xsd:complexType name="aFlow">
+  <xsd:complexType name="flowInput">
   	<xsd:attribute name="id" type="xsd:string" use="required" />
     <xsd:attribute name="name" type="xsd:string" use="required" />
     <xsd:attribute name="type" type="xsd:string" use="required" />
@@ -59,7 +59,7 @@
   </xsd:complexType>
 
   <!-- DEFINITION FOR A CONTROL -->
-  <xsd:complexType name="aControl">
+  <xsd:complexType name="controlInput">
   	<xsd:attribute name="id" type="xsd:string" use="required" />
     <xsd:attribute name="name" type="xsd:string" use="required"/>
     <xsd:attribute name="type" type="xsd:string" use="required" />

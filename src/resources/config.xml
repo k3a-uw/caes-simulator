@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<sd:system xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:noNamespaceSchemaLocation="config.xsd" xmlns:sd="http://24.19.117.165/xml"
+<system xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="config.xsd" xmlns="http://24.19.117.165/xml/config.xsd"
  id="0" name="PopulationModel" type="Data" 
  timeSteps="1000">
  	<stock id="S0.1" name="Population" units="People" max_level="0" cur_level="1000" />
@@ -21,4 +21,4 @@
     <control id="C0.11" name="ThreshFertility" function="100000" type="constant"	initialvalue="100000" />
     <cloud id="C0.1.1" units="people" name="PotentialPeople" cur_level="1000" />
     <cloud id="C0.1.2" units="people" name="Cemetary" cur_level="1000" />
-</sd:system>
+</system>
