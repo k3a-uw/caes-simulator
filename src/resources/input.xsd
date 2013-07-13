@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://24.19.117.165/xml/input.xsd"
-  xmlns:sc="http://24.19.117.165/xml/input.xsd"
+  targetNamespace="http://24.19.117.165/xml/input"
+  xmlns:sc="http://24.19.117.165/xml/input"
   elementFormDefault="qualified">
 
 <xsd:annotation>
@@ -32,9 +32,9 @@
 
   <xsd:complexType name="step">
   	<xsd:choice minOccurs="0" maxOccurs="unbounded">
-  		<xsd:element name="Stock" type="sc:stockInput" minOccurs="0" maxOccurs="unbounded" />
-  		<xsd:element name="Flow" type="sc:flowInput" minOccurs="0" maxOccurs="unbounded" />
-  		<xsd:element name="Control" type="sc:controlInput" minOccurs="0" maxOccurs="unbounded" />
+  		<xsd:element name="stock" type="sc:stockInput" minOccurs="0" maxOccurs="unbounded" />
+  		<xsd:element name="flow" type="sc:flowInput" minOccurs="0" maxOccurs="unbounded" />
+  		<xsd:element name="control" type="sc:controlInput" minOccurs="0" maxOccurs="unbounded" />
   	</xsd:choice>
   	<xsd:attribute name="stepValue" type="xsd:integer" use="required" />
   	<xsd:attribute name="relative"  type="xsd:boolean" use="required" />

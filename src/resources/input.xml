@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
-<inputs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:noNamespaceSchemaLocation="input.xsd" xmlns="http://24.19.117.165/xml/input.xsd"
- id="0" lastStep="1000" useRelativeSteps="0">
+<inputs xmlns="http://24.19.117.165/xml/input" id="0" name="PopulationModel" lastStep="1000" useRelativeSteps="0">
  	<timestep stepValue="1001" relative="0">
  		<stock id="S0.1" name="Population" type="valueSet" value="10000" />
  	</timestep>
