@@ -15,6 +15,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import components.Cloud;
@@ -24,7 +25,6 @@ import components.Flow;
 import components.Stock;
 
 import error.InvalidXMLException;
-import error.ValueOverflowException;
 
 /**
  * A class to loop through the configuration file and instantiate the objects
@@ -118,13 +118,37 @@ public class Loader {
 		}
 
 		linkDataStructure();
+		initFunctions();
 		
 		return data_structure;
 	}
-	
-	
+
 	/**
-	 * Links all objects together, called after data
+	 * Loops through all functions in the data structure and initializes
+	 * the current/previous values if the function is not recursive. 
+	 * @throws InvalidXMLException 
+	 */
+	private void initFunctions() throws InvalidXMLException {
+		Map<String, Component> map = data_structure.getCompleteMap();
+		for (Entry<String, Component> e : map.entrySet())
+		{
+			Component current = (Component) e.getValue();
+			if (current.getType() == Component.TYPE_CONTROL) 
+			{
+				Control cc = (Control) current;
+				if (!cc.isInitialized())
+					cc.initValue();
+			}
+		}
+		
+	}
+
+
+	/**
+	 * Loops through constructed {@link datamodel.SimulationDataStructure} and associates memory
+	 * references to {@link Component}s as applicable.  {@link Flow}s are associated with Sources, Sinks, and a
+	 * {@link Control}.  {@link Control}s have their function extracted and new data structures are
+	 * built to allow correct parsing and calculation of the functions.
 	 */
 	private void linkDataStructure()
 	{
@@ -143,11 +167,10 @@ public class Loader {
 				Control control = (Control) map.get(fc.getControlName());
 				fc.setControl(control);
 				break;
+
 			// CONTROL NEEDS TO BE GIVEN ALL OF THE PARAMETER OBJECTS
 			case Component.TYPE_CONTROL:
 				Control cc = (Control) current;
-				//Component[] params = extractComponents(cc.getfunction(), cc.getFunctionType());
-				//cc.setParameters(params);
 				extractComponents(cc);
 				break;
 			}
@@ -155,7 +178,11 @@ public class Loader {
 	}
 	
 	/**
-	 * Function to Component Parsing.
+	 * Accepts a {@link Control} and reviews its function stores references to any
+	 * components that are stored within the function in the order they are
+	 * referenced.  It also stores the operators in the same order.  This allows
+	 * The function to be rebuilt.
+	 * @param the_control The {@link Control} in which to set parameters and operators.
 	 */
 	private void extractComponents(Control the_control)
 	{
@@ -190,7 +217,7 @@ public class Loader {
 	 * {@link Loader#data_structure}.
 	 * @throws ValueOverflowException 
 	 */
-	private void buildClouds() throws ValueOverflowException
+	private void buildClouds()
 	{
 		String cloudQuery = "//system/cloud";
 		NodeList cloudNodes = null;
@@ -210,8 +237,7 @@ public class Loader {
 				String cloudID    = cloudInfo.getNamedItem("id").getNodeValue();
 				String cloudName  = cloudInfo.getNamedItem("name").getNodeValue();
 				String cloudUnits = cloudInfo.getNamedItem("units").getNodeValue();
-				double cloudLevel  = Double.parseDouble(cloudInfo.getNamedItem("cur_level").getNodeValue());
-				data_structure.addComponent(new Cloud(cloudName, cloudID, cloudLevel, cloudUnits));
+				data_structure.addComponent(new Cloud(cloudName, cloudID, cloudUnits));
 			}
 
 		} else {
@@ -255,7 +281,7 @@ public class Loader {
 	 * {@link Loader#data_structure}.
 	 * @throws ValueOverflowException 
 	 */
-	private void buildStocks() throws ValueOverflowException
+	private void buildStocks()
 	{
 		String stockQuery = "//system/stock";
 		NodeList stockNodes = null;
@@ -276,9 +302,17 @@ public class Loader {
 				String stockID    = stockInfo.getNamedItem("id").getNodeValue();
 				String stockName  = stockInfo.getNamedItem("name").getNodeValue();
 				String stockUnits = stockInfo.getNamedItem("units").getNodeValue();
-				int max_level  = Integer.parseInt(stockInfo.getNamedItem("max_level").getNodeValue());
+				
+				Double max_level;  //IF A USER DOESN'T SPECIFICY A MAX THEN TURN IT TO INFINITY.
+				if (stockInfo.getNamedItem("max_level") == null)
+				{
+					max_level = Double.POSITIVE_INFINITY;
+				} else {
+					max_level  = Double.parseDouble(stockInfo.getNamedItem("max_level").getNodeValue());
+				}
+
 				int cur_level  = Integer.parseInt(stockInfo.getNamedItem("cur_level").getNodeValue());
-				if (max_level == 0) { max_level = Integer.MAX_VALUE; }
+				
 				stocks[i] = new Stock(stockName, stockID, max_level, stockUnits);
 				stocks[i].setCurrentValue(cur_level);
 				stocks[i].setPreviousValue(cur_level);
@@ -297,7 +331,7 @@ public class Loader {
 	 * {@link Loader#data_structure}.
 	 * @throws ValueOverflowException 
 	 */
-	private void buildControls() throws ValueOverflowException
+	private void buildControls()
 	{
 		String query = "//system/control";
 		NodeList listOfNodes = null;
@@ -318,9 +352,19 @@ public class Loader {
 				String name  = nodeMap.getNamedItem("name").getNodeValue();
 				String funct = nodeMap.getNamedItem("function").getNodeValue();
 				String type  = nodeMap.getNamedItem("type").getNodeValue();
-				Double value = Double.parseDouble(nodeMap.getNamedItem("initialvalue").getNodeValue()); 
+				
+				Node init = nodeMap.getNamedItem("initialvalue");
+				boolean isInit = false;
+				double value = 0.0;
+				if (init != null)
+				{
+					value = Double.parseDouble(nodeMap.getNamedItem("initialvalue").getNodeValue());
+					isInit = true;
+				}
 
-				data_structure.addComponent(new Control(name, id, funct, type, value));
+				Control c = new Control(name, id, funct, type, value);
+				c.setInitialized(isInit);
+				data_structure.addComponent(c);
 			}
 
 
@@ -335,7 +379,7 @@ public class Loader {
 	 * {@link Loader#data_structure}.
 	 * @throws ValueOverflowException 
 	 */
-	private void buildFlows() throws ValueOverflowException
+	private void buildFlows()
 	{
 		String query = "//system/flow";
 		NodeList listOfNodes = null;
@@ -355,16 +399,26 @@ public class Loader {
 				NamedNodeMap nodeMap = listOfNodes.item(i).getAttributes();
 				String id    = nodeMap.getNamedItem("id").getNodeValue();
 				String name  = nodeMap.getNamedItem("name").getNodeValue();
-				Double max_capacity = Double.parseDouble(nodeMap.getNamedItem("max_capacity").getNodeValue());
-				Double cur_level    = Double.parseDouble(nodeMap.getNamedItem("cur_level").getNodeValue());
+				
+				Double max_capacity;
+				if (nodeMap.getNamedItem("max_capacity") == null)
+				{
+					max_capacity = Double.POSITIVE_INFINITY;
+				} else {
+					max_capacity = Double.parseDouble(nodeMap.getNamedItem("max_capacity").getNodeValue());
+				}
+				
+				Double cur_level = 0.0;
+				if (nodeMap.getNamedItem("cur_level") != null)
+					cur_level = Double.parseDouble(nodeMap.getNamedItem("cur_level").getNodeValue());
+				
 				String src_id = nodeMap.getNamedItem("src_id").getNodeValue();
 				String sink_id = nodeMap.getNamedItem("sink_id").getNodeValue();
 				String control_name = nodeMap.getNamedItem("control_name").getNodeValue();
-				flows[i] = new Flow(name, id, src_id,sink_id,max_capacity, cur_level, control_name);
+				flows[i] = new Flow(name, id, src_id,sink_id, max_capacity, cur_level, control_name);
 				data_structure.addComponent(flows[i]);
 
 			}
-
 
 		} else {
 			System.err.println("No Stocks to Add!");

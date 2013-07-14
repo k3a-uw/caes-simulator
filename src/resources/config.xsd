@@ -12,16 +12,16 @@
 </xsd:annotation>  
   <!-- ALL ELEMENTS EXIST UNDER THE ROOT OF A SYSTEM -->
   
-  <xsd:element name="system" type="sc:aSystem" />
+  <xsd:element name="system" type="sc:System" />
 
   <!-- A SYSTEM HAS SOME COMPONENTS AND A FEW ATTRIBUTES -->
-  <xsd:complexType name="aSystem">
+  <xsd:complexType name="System">
   	<xsd:choice minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="stock"      type="sc:aStock"   minOccurs="0" maxOccurs="unbounded" />
-      <xsd:element name="cloud"  	 type="sc:aCloud"   minOccurs="0" maxOccurs="unbounded" />
-      <xsd:element name="flow"       type="sc:aFlow"    minOccurs="0" maxOccurs="unbounded" />
-      <xsd:element name="control"    type="sc:aControl" minOccurs="0" maxOccurs="unbounded" />
-      <xsd:element name="subsystem"  type="sc:aSystem"  minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="stock"      type="sc:Stock"   minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="cloud"  	 type="sc:Cloud"   minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="flow"       type="sc:Flow"    minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="control"    type="sc:Control" minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="subsystem"  type="sc:System"  minOccurs="0" maxOccurs="unbounded" />
     </xsd:choice>
     <xsd:attribute name="id"           type="xsd:string" use="required" />
     <xsd:attribute name="name"         type="xsd:string" use="required" />
@@ -32,41 +32,40 @@
    
     
   <!-- DEFINITION FOR A STOCK -->
-  <xsd:complexType name="aStock">
+  <xsd:complexType name="Stock">
   	<xsd:attribute name="id" type="xsd:string" use="required" />
-    <xsd:attribute name="name" type="xsd:string" />
+    <xsd:attribute name="name" type="xsd:string" use="required" />
+  	<xsd:attribute name="cur_level" type="xsd:string" use="required" />
     <xsd:attribute name="units" type="xsd:string" use="optional" />
   	<xsd:attribute name="max_level" type="xsd:string" use="optional" />
-  	<xsd:attribute name="cur_level" type="xsd:string" use="optional" />
   </xsd:complexType>
 
   <!-- DEFINITION FOR A CLOUD -->
-  <xsd:complexType name="aCloud">
+  <xsd:complexType name="Cloud">
   	<xsd:attribute name="id" type="xsd:string" use="required" />
-    <xsd:attribute name="name" type="xsd:string" />
+    <xsd:attribute name="name" type="xsd:string" use="required" />
     <xsd:attribute name="units" type="xsd:string" use="optional" />
-  	<xsd:attribute name="cur_level" type="xsd:string" use="optional" />
   </xsd:complexType>
 
   <!-- DEFINITION FOR A FLOW -->
-  <xsd:complexType name="aFlow">
+  <xsd:complexType name="Flow">
   	<xsd:attribute name="id" type="xsd:string" use="required" />
   	<xsd:attribute name="name" type="xsd:string" use="required" />
   	<xsd:attribute name="src_id" type="xsd:string" use="required" />
   	<xsd:attribute name="sink_id" type="xsd:string" use="required" />
+  	<xsd:attribute name="control_name" type="xsd:string" use="required" />
   	<xsd:attribute name="type" type="xsd:string" use="optional" />
   	<xsd:attribute name="max_capacity" type="xsd:string" use="optional" />
   	<xsd:attribute name="cur_level" type="xsd:string" use="optional" />
-  	<xsd:attribute name="control_name" type="xsd:string" />
   </xsd:complexType>
 
   <!-- DEFINITION FOR A CONTROL -->
-  <xsd:complexType name="aControl">
+  <xsd:complexType name="Control">
   	<xsd:attribute name="id" type="xsd:string" use="required" />
-  	<xsd:attribute name="name" type="xsd:string" />
+  	<xsd:attribute name="name" type="xsd:string" use="required"/>
   	<xsd:attribute name="function" type="xsd:string" use="required" />
   	<xsd:attribute name="type" type="xsd:string" use="optional" />
-  	<xsd:attribute name="initialvalue" type="xsd:string" />
+  	<xsd:attribute name="initialvalue" type="xsd:string" use="optional" />
   </xsd:complexType>
 
 </xsd:schema>

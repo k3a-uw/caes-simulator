@@ -14,7 +14,7 @@ import components.Component;
  */
 public class SimulationDataStructure extends Observable
 {
-	private static Map<String, Component> my_components = new HashMap<String, Component>();
+	private Map<String, Component> my_components = new HashMap<String, Component>();
 
 	public SimulationDataStructure()
 	{
@@ -43,7 +43,7 @@ public class SimulationDataStructure extends Observable
 	{
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("<HTML><TABLE>");
+		sb.append("<HTML><TABLE><TR><TD>Type</TD><TD>Name</TD><TD>PreviousValue</TD><TD>CurrentValue</TD></TR>");
 		for (Entry<String, Component> comp : my_components.entrySet())
 		{
 			sb.append("<TR><TD>");
@@ -64,10 +64,27 @@ public class SimulationDataStructure extends Observable
 			case 4:
 				sb.append("SENSOR");
 				break;
+			case 5:
+				sb.append("CLOUD");
+				break;
 			}
 			sb.append("</TD><TD>");
 			sb.append(comp.getKey());
-			sb.append("</TD><TD align=\"right\">" + String.format("%.5f",comp.getValue().getPreviousValue()));
+			sb.append("</TD><TD align=\"right\">");
+			if (Double.isInfinite(comp.getValue().getPreviousValue()))
+			{
+				sb.append("infinity");
+			} else {
+				sb.append(String.format("%.5f",comp.getValue().getPreviousValue()));
+			}
+			
+			sb.append("</TD><TD align=\"right\">");
+			if (Double.isInfinite(comp.getValue().getCurrentValue()))
+			{
+				sb.append("infinity");
+			} else {
+				sb.append(String.format("%.5f",comp.getValue().getCurrentValue()));
+			}
 			sb.append("</TD></TR>");
 	
 		}

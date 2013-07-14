@@ -1,5 +1,4 @@
 package components;
-import error.ValueOverflowException;
 
 /**
  * Stock class
@@ -8,6 +7,7 @@ import error.ValueOverflowException;
  *
  */
 public class Stock extends Component {
+
 	/**
 	 * The max value
 	 */
@@ -17,11 +17,6 @@ public class Stock extends Component {
 	 * The unit
 	 */
 	private String unit;
-
-	/**
-	 * The previous value
-	 */
-	private double previous_value;
 
 
 	/**
@@ -36,54 +31,24 @@ public class Stock extends Component {
 	public Stock(final String the_name, final String the_id,
 		     final double the_max_value, final String the_unit) {
 		super(the_name, the_id, Component.TYPE_STOCK);
-
+		
 		max_value = the_max_value;
 		unit = the_unit;
 	}
 
 	/**
-	 * Set the current value of this stock.
+	 * Set the current value of this stock up to its maximum value.
 	 * 
 	 * @param the_current_value the value to be set.
-	 * @throws ValueOverflowException throw this exception if the current value exceed maximum allowed value.
 	 */
-	public void setCurrentValue(final double the_current_value)
-			throws ValueOverflowException {
-		if (the_current_value > max_value) {
-			throw new ValueOverflowException();
+	public void setCurrentValue(final double the_current_value) {
+		if (Double.isInfinite(max_value)) {
+			current_value = the_current_value;
+		} else {
+			current_value = Math.min(the_current_value, max_value);
 		}
-		super.setCurrentValue(the_current_value);
 	}
-
-	/**
-	 * Set the previous value.
-	 * 
-	 * @param the_previous_value the value to be set
-	 */
-	public void setPreviousValue(final double the_previous_value) {
-		super.setPreviousValue(the_previous_value);
-	}
-
-
-	/**
-	 * Get current value.
-	 * 
-	 * @return current value.
-	 */
-	public double getCurrentValue() {
-		return super.getCurrentValue();
-	}
-
-	/**
-	 * Get previous value.
-	 * 
-	 * @return previous value.
-	 */
-	public double getPreviousValue() {
-		return super.getPreviousValue();
-	}
-
-
+		
 	/**
 	 * Get this measuring unit.
 	 * 

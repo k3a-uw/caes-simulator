@@ -1,5 +1,4 @@
 package components;
-import error.ValueOverflowException;
 
 /**
  * Component class
@@ -20,27 +19,27 @@ public class Component {
 	/**
 	 * The name of this component.
 	 */
-	private final String name;
+	protected final String name;
 
 	/**
 	 * The ID of this component.
 	 */
-	private final String id;
+	protected final String id;
 
 	/**
 	 * This type.
 	 */
-	private final int type;
+	protected int type;
 	
 	/**
 	 * The previous value of this component hold.
 	 */
-	private double previous_value;
+	protected double previous_value;
 
 	/**
 	 * The current value of this component hold.
 	 */
-	private double current_value;
+	protected double current_value;
 
 	/**
 	 * Instantiate this component.
@@ -52,8 +51,7 @@ public class Component {
 	 * @param the_type
 	 *            type of this component.
 	 */
-	public Component(final String the_name, final String the_id,
-			final int the_type) {
+	public Component(final String the_name, final String the_id, final int the_type) {
 		name = the_name;
 		id = the_id;
 		type = the_type;
@@ -87,6 +85,13 @@ public class Component {
 	}
 	
 	/**
+	 * Set the type of this component.
+	 */
+	protected void setType(final int the_type) {
+		type = the_type;
+	}
+	
+	/**
 	 * Set previous value of this component.
 	 * 
 	 * @param the_value
@@ -110,9 +115,8 @@ public class Component {
 	 * 
 	 * @param the_value
 	 *            the value to set.
-	 * @throws ValueOverflowException 
 	 */
-	public void setCurrentValue(final double the_value) throws ValueOverflowException {
+	public void setCurrentValue(final double the_value) {
 		current_value = the_value;
 	}
 
@@ -131,6 +135,28 @@ public class Component {
 	public void backup() {
 		setPreviousValue(getCurrentValue());
 	}
+	
+	/**
+	 * Allow an object to explicitly add to the current value.
+	 * Primarily used for flows to move values around.
+	 * @param value
+	 */
+	protected void add(final double value)
+	{
+		setCurrentValue(current_value+value);
+	}
+	
+	/**
+	 * Allow an object to explicitly subtract from the current value.
+	 * Primarily used for flows to move values around.
+	 * @param value
+	 */
+	
+	protected void subtract(final double value)
+	{
+		setCurrentValue(current_value-value);
+	}
+
 	
 	/**
 	 * Calculate new value.

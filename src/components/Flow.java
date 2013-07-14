@@ -1,6 +1,5 @@
 package components;
 
-import error.ValueOverflowException;
 
 /**
  * Flows class. Edited by Sean Chung.
@@ -54,7 +53,7 @@ public class Flow extends Component
 	public Flow(final String the_name, final String the_id,
 			final String the_src_id, final String the_sink_id,
 			final double the_max_capacity, final double the_cur_level,
-			final String the_control) throws ValueOverflowException
+			final String the_control) 
 	{
 
 		super(the_name, the_id, Component.TYPE_FLOW);
@@ -66,24 +65,36 @@ public class Flow extends Component
 	}
 
 	/**
-	 * Return the ID of the source.
+	 * Set the current value of this stock up to its maximum value.
 	 * 
-	 * @return source ID
+	 * @param the_current_value the value to be set.
 	 */
-	public String getMy_src_id()
-	{
-		return my_src_id;
+	@Override
+	public void setCurrentValue(final double the_current_value) {
+		if (Double.isInfinite(my_max_capacity)) {
+			current_value = the_current_value;
+		} else {
+			current_value = Math.min(the_current_value, my_max_capacity);
+		}
 	}
 
-	/**
-	 * Set the ID of the source.
-	 * 
-	 * @param the_src_id
-	 *            the source ID
-	 */
-	public void setMy_src_id(final String the_src_id)
+	public void calcNewValue()
 	{
-		my_src_id = the_src_id;
+		double val = control.getPreviousValue();
+	
+		setCurrentValue(val);
+
+		//SUBTRACT FROM SOURCE
+		source.subtract(current_value);
+		
+		//ADD TO SINK
+		sink.add(current_value);
+	
+	}
+
+	public String getControlName()
+	{
+		return my_control_name;
 	}
 
 	/**
@@ -94,6 +105,16 @@ public class Flow extends Component
 	public String getMy_sink_id()
 	{
 		return my_sink_id;
+	}
+
+	/**
+	 * Return the ID of the source.
+	 * 
+	 * @return source ID
+	 */
+	public String getMy_src_id()
+	{
+		return my_src_id;
 	}
 
 	/**
@@ -108,52 +129,14 @@ public class Flow extends Component
 	}
 
 	/**
-	 * Return the maximum capacity of the flow.
+	 * Set the ID of the source.
 	 * 
-	 * @return flow max capacity
+	 * @param the_src_id
+	 *            the source ID
 	 */
-	public double getMy_max_capacity()
+	public void setMy_src_id(final String the_src_id)
 	{
-		return my_max_capacity;
-	}
-
-	/**
-	 * Set the value of the maximum capacity for the flow.
-	 * 
-	 * @param the_max_capacity
-	 *            the maximum capacity of the flow
-	 */
-	public void setMy_max_capacity(final double the_max_capacity)
-	{
-		my_max_capacity = the_max_capacity;
-	}
-
-	/**
-	 * Return the current capacity for the flow.
-	 * 
-	 * @return current capacity
-	 */
-	public double getMy_cur_level()
-	{
-		return super.getCurrentValue();
-	}
-
-	/**
-	 * Set the current capacity for the flow.
-	 * 
-	 * @param the_cur_level
-	 *            current value of the flow
-	 * @throws ValueOverflowException
-	 */
-	public void setMy_cur_level(final double the_cur_level)
-			throws ValueOverflowException
-	{
-		setCurrentValue(the_cur_level);
-	}
-
-	public void setSource(Component c)
-	{
-		source = c;
+		my_src_id = the_src_id;
 	}
 
 	public void setSink(Component c)
@@ -161,37 +144,14 @@ public class Flow extends Component
 		sink = c;
 	}
 
+	public void setSource(Component c)
+	{
+		source = c;
+	}
+
 	public void setControl(Control c)
 	{
 		control = c;
-	}
-
-	public String getControlName()
-	{
-		return my_control_name;
-	}
-
-	public void calcNewValue()
-	{
-		Double val = control.getPreviousValue();
-		try
-		{
-			source.setCurrentValue(source.getPreviousValue() - val);
-		} catch (ValueOverflowException e)
-		{
-			System.out.println("An error occurred in " + getName() + " when setting source: " + source.getName() + 
-				 " to " + (source.getPreviousValue() - val));
-		}
-		
-		try
-		{
-			sink.setCurrentValue(sink.getPreviousValue() + val);
-		} catch (ValueOverflowException e)
-		{
-			System.out.println("An error occurred in " + getName() + " when setting sink: " + sink.getName() + 
-					 " to " + (sink.getPreviousValue() - val));
-		}
-
 	}
 
 }
