@@ -1,10 +1,13 @@
 package ui;
 
+import input.InputStreamer;
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -16,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.xml.stream.XMLStreamException;
 
 import datamodel.Loader;
 import datamodel.MainControl;
@@ -31,6 +35,7 @@ import datamodel.SimulationDataStructure;
 public class Simulator implements ActionListener, Observer
 {
 	private JLabel step_label = new JLabel();
+	private JLabel input_label = new JLabel();
 	private JFrame frame;
 	private JLabel output_label;
 	private JTextField config_file_path;
@@ -38,6 +43,7 @@ public class Simulator implements ActionListener, Observer
 	private JButton config_file_button;
 	private JButton input_file_button;
 	private JButton load_config_button;
+	private JButton load_input_button;
 	private JButton start_button;
 	private JButton pause_button;
 	private JButton step_button;
@@ -70,11 +76,19 @@ public class Simulator implements ActionListener, Observer
 		frame.add(scroll_pane, BorderLayout.CENTER);
 		
 		JPanel north_panel = new JPanel();
+		north_panel.setLayout(new GridLayout(1,2));
+		
+		step_label.setText("Current Step: 0");		
+		input_label.setText("Input Not Loaded");
+		north_panel.add(input_label);
 		north_panel.add(step_label);
-		step_label.setText("Current Step: 0");
+		
+		
+		
 		frame.add(step_label, BorderLayout.NORTH);
+		frame.add(input_label, BorderLayout.NORTH);
 		JPanel file_panel = new JPanel();
-		file_panel.setLayout(new GridLayout(3, 4));
+		file_panel.setLayout(new GridLayout(3, 3));
 		
 		config_file_path = new JTextField();
 		file_panel.add(config_file_path);
@@ -93,8 +107,11 @@ public class Simulator implements ActionListener, Observer
 		input_file_button.addActionListener(this);
 		file_panel.add(input_file_button);
 		
-		file_panel.add(new JLabel());
-		
+		load_input_button = new JButton("Load Input");
+		file_panel.add(load_input_button);
+		load_input_button.addActionListener(this);
+		load_input_button.setEnabled(false);
+				
 		start_button = new JButton("Start");
 		start_button.addActionListener(this);
 		start_button.setEnabled(false);
@@ -132,6 +149,7 @@ public class Simulator implements ActionListener, Observer
 			if (result == JFileChooser.APPROVE_OPTION)
 			{
 				input_file_path.setText(input_file_chooser.getSelectedFile().getPath());
+				load_input_button.setEnabled(true);
 			}
 		}
 		else if (the_event.getSource() == load_config_button)
@@ -174,6 +192,16 @@ public class Simulator implements ActionListener, Observer
 		{
 			my_maincontrol.step();
 		}
+		else if(the_event.getSource() == load_input_button)
+		{
+			try {
+				my_maincontrol.setInputStreamer(new InputStreamer(input_file_path.getText()));
+				input_label.setText("Input Loaded");
+			} catch (FileNotFoundException | XMLStreamException e) {
+				input_label.setText("Input Failed");
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public static void main(final String... the_args)
@@ -185,6 +213,5 @@ public class Simulator implements ActionListener, Observer
 	public void update(Observable o, Object arg) {
 		output_label.setText(my_data.toString());
 		step_label.setText("Current Step: " + my_maincontrol.getCurrentStep());
-		
 	}
 }

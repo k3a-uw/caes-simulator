@@ -13,12 +13,10 @@
 	  Author: Kevin Anderson (k3a@uw.edu)
 	</xsd:documentation>
 </xsd:annotation>  
-  <!-- ALL ELEMENTS EXIST UNDER THE ROOT OF A SYSTEM -->
-  
+
+  <!-- ALL ELEMENTS EXIST UNDER THE ROOT OF AN INPUT SET -->  
   <xsd:element name="inputs" type="sc:inputSet" />
   
-  
-
   <!-- A SYSTEM HAS SOME COMPONENTS AND A FEW ATTRIBUTES -->
   <xsd:complexType name="inputSet">
   	<xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -26,8 +24,6 @@
     </xsd:choice>
     <xsd:attribute name="id"           type="xsd:string" use="required" />
     <xsd:attribute name="name"         type="xsd:string" use="required" />
-    <xsd:attribute name="lastStep"     type="xsd:integer" use="required" />
-    <xsd:attribute name="useRelativeSteps" type="xsd:boolean" use="required" /> 
   </xsd:complexType>       
 
   <xsd:complexType name="step">
@@ -37,7 +33,6 @@
   		<xsd:element name="control" type="sc:controlInput" minOccurs="0" maxOccurs="unbounded" />
   	</xsd:choice>
   	<xsd:attribute name="stepValue" type="xsd:integer" use="required" />
-  	<xsd:attribute name="relative"  type="xsd:boolean" use="required" />
   		
   	
   </xsd:complexType>

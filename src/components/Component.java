@@ -157,6 +157,45 @@ public class Component {
 		setCurrentValue(current_value-value);
 	}
 
+	//TODO CREATE AN ENUMAERATION FOR COMPONENT TYPING
+	/**
+	 * Accepts a string and converts it to the proper integer value 
+	 * that relates to component type.  It is NOT case sensitive.
+	 * @param the_name The string name of the component. 
+	 * @return The related Static int of that component.
+	 * @throws IllegalArgumentException When the string provided is not a valid component name.
+	 */
+	public static int convertName(String the_name)
+	{
+		
+		if (the_name.toUpperCase().equals("FLOW"))
+		{
+			return TYPE_FLOW;
+		} else if (the_name.toUpperCase().equals("STOCK"))
+		{
+			return TYPE_STOCK;
+		} else if (the_name.toUpperCase().equals("SYSTEM"))
+		{
+			return TYPE_SUBSYSTEM;
+		} else if (the_name.toUpperCase().equals("CONTROL"))
+		{
+			return TYPE_CONTROL;
+		} else if (the_name.toUpperCase().equals("SENSOR"))
+		{
+			return TYPE_SENSOR;
+		} else if (the_name.toUpperCase().equals("CLOUD"))
+		{
+			return TYPE_CLOUD;
+		} else
+		{
+			throw new IllegalArgumentException(the_name + " is not a valid Component Type");
+		}
+	
+		
+		
+	}
+	
+	
 	
 	/**
 	 * Calculate new value.

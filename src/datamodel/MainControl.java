@@ -1,5 +1,9 @@
 package datamodel;
 
+import input.ComponentStep;
+import input.InputStreamer;
+import input.TimeStep;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -25,6 +29,7 @@ public class MainControl
 	private int my_steps;
 	private File my_file;
 	private PrintWriter my_output_writer;
+	private InputStreamer input_stream;
 	
 	public MainControl(SimulationDataStructure the_data_structure, final int the_steps) {
 		my_data_structure = the_data_structure;
@@ -44,6 +49,11 @@ public class MainControl
 			my_output_writer.print(c.getName() + ",");
 		}
 		my_output_writer.println();
+	}
+	
+	public void setInputStreamer(InputStreamer input)
+	{
+		input_stream = input;
 	}
 	
 	public void run() {
@@ -83,6 +93,11 @@ public class MainControl
 	private void next() {
 		
 		my_output_writer.print(current_step + ",");
+		
+		//INTRODUCE METHOD HERE FOR DATA INPUT SET ALL OF THE CURRENT VALUES TO THE NEW
+		//INPUT VALUES BASED ON THE INPUT SETS
+		if (input_stream != null && input_stream.hasNext())
+			updateFromInput();
 
 		for (Component c : my_data_structure.getAllComponents()) {
 			my_output_writer.print(c.getCurrentValue() + ",");
@@ -99,6 +114,26 @@ public class MainControl
 		my_data_structure.notifyObservers();
 	}
 	
+	private void updateFromInput() {
+		if (input_stream.peek().getStepValue() == current_step)
+		{
+			TimeStep timestep = input_stream.getNextStep();
+			ComponentStep[] comps = timestep.getComponentSteps();
+			for (int i=0; i < comps.length; i++)
+			{
+				for(Component c : my_data_structure.getAllComponents()) {
+					//TODO FOCUS MORE ON IDS, BUT FOR NOW USING NAMES
+					if (c.getName().equals(comps[i].getName()))
+					{ // IF NAME MATCHES SET THE VALUE
+					  //CALCULATE A NEW VALUE FOR THE COMPONENT.
+						c.setCurrentValue(comps[i].calcNewDouble(c.getCurrentValue()));
+					}
+				}
+			}
+		}
+		
+	}
+
 	public int getCurrentStep()
 	{
 		return current_step;
