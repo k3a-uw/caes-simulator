@@ -3,6 +3,7 @@ package ui;
 import input.InputStreamer;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -78,15 +79,14 @@ public class Simulator implements ActionListener, Observer
 		JPanel north_panel = new JPanel();
 		north_panel.setLayout(new GridLayout(1,2));
 		
+		frame.add(north_panel, BorderLayout.NORTH);
 		step_label.setText("Current Step: 0");		
 		input_label.setText("Input Not Loaded");
-		north_panel.add(input_label);
 		north_panel.add(step_label);
+		north_panel.add(input_label);
 		
 		
 		
-		frame.add(step_label, BorderLayout.NORTH);
-		frame.add(input_label, BorderLayout.NORTH);
 		JPanel file_panel = new JPanel();
 		file_panel.setLayout(new GridLayout(3, 3));
 		

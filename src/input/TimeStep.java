@@ -32,7 +32,10 @@ public class TimeStep {
 	
 	public ComponentStep[] getComponentSteps()
 	{
-		return (ComponentStep[]) components.toArray();
+		ComponentStep[] toReturn = new ComponentStep[components.size()];
+		for (int i=0; i < components.size(); i++)
+			toReturn[i] = components.get(i);
+		return toReturn;
 	}
 	
 	@Override

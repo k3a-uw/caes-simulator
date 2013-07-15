@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <inputs xmlns="http://24.19.117.165/xml/input" id="0" name="PopulationModel">
- 	<timestep stepValue="500">
- 		<stock id="S0.1" name="Population" type="valueSet" value="10000" />
+ 	<timestep stepValue="100">
+ 		<stock id="S0.1" name="Population" type="valueScale" value="0.50" />
  	</timestep>
  	
  	<timestep stepValue="501">
@@ -10,8 +10,8 @@
  	</timestep>
  	
  	<timestep stepValue="502">
- 		<control id="C0.8" name="MortalityRate" type="valueSet" value="0.5" />
- 		<control id="C0.5" name="FemaleFraction" type="valueSet" value="0.25" />
+ 		<control id="C0.8" name="FertilityRate" type="valueSet" value="0.90" />
+ 		<control id="C0.5" name="MortalityRate" type="valueSet" value="0.25" />
  	</timestep>
  	<timestep stepValue="503">
  		<stock id="S0.1" name="Population" type="valueSet" value="10000" />
