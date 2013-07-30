@@ -27,11 +27,14 @@ import components.Stock;
 import error.InvalidXMLException;
 
 /**
- * A class to loop through the configuration file and instantiate the objects
- * laid out in the config.xml file.  Uses config.xsd for the schema.
+ * The {@link Loader} serves as the parser for the system configuration XML document.
+ * After parsing and instantiating all objects defined by the user, the {@link Loader}
+ * links all related {@link Component}s to eachother, ultimately serving as a "linker."
+ * Lastly, it also serves as a factory for a {@link SimulationDataStructure} for the
+ * system designed by the user, defined by the XML document it is provided.
+ * The {@link Loader} is constructed based on the /resources/config.xsd schema.
  * @author Kevin E. Anderson
- * @modifier Kenny Kong
- * @version 0
+ * @version 2013.07.21
  */
 public class Loader {
 
@@ -48,32 +51,38 @@ public class Loader {
 
 
 	/**
-	 * Store the timeSteps at load time.  No need to keep looking it up.
+	 * Stores the number of times this system will step through before stopping.  Is
+	 * defined in the configuration file provided by the user.
 	 */
-	private int timeSteps = -1;
+	private int timesteps = -1;
+	
+	/* 
+	 * NO CONSTRUCTOR NEEDED -- USES JAVA'S IMPLICIT BUILT IN CONTRUCTOR
+	 */
 	
 	/**
-	 * Generally called by {@link datamodel.MainControl}, returns the number of timeSteps
-	 * requested by the system.  
+	 * Returns the value of {@link Loader#timesteps}.
+	 * @return The value of {@link Loader#timesteps}.
 	 */
-	public int getTimeSteps()
+	public int getTimesteps()
 	{
-		return timeSteps;		
+		return timesteps;		
 	}
 	
 	
 	/**
-	 * loadFile simply builds a parsing factory and then parses the configuration file
-	 * into a {@link org.w3c.dom.Document} for easy node navigation.
-	 * @param file_to_parse The file captured by the UI and provided to the loader.
-	 * @throws InvalidXMLException if the file is not a valid XML file.
+	 * Builds a parsing factory and then parses the configuration file into a 
+	 * {@link org.w3c.dom.Document} for easy node navigation.
+	 * @param file_to_parse The file captured by the {@link UI.Simulator}
+	 * @throws InvalidXMLException if the file is not a valid/well formed XML file.
 	 * @throws ParserConfigurationException if a builder cannot be configured.
 	 */
 	public void loadFile(File file_to_parse) throws InvalidXMLException, ParserConfigurationException
 	{
 
 		DocumentBuilderFactory domFact = DocumentBuilderFactory.newInstance();
-		domFact.setNamespaceAware(false);   // ALWAYS PAY ATTENTION TO NAMESPACE
+		domFact.setNamespaceAware(false);
+		//TODO Figure out why namespace aware cannot be true when the xml is correct.
 
 		DocumentBuilder build;
 		build = domFact.newDocumentBuilder();  //throws ParserConfigException
@@ -83,7 +92,7 @@ public class Loader {
 		try {
 			config_file = build.parse(file_to_parse);
 		} catch (Exception e) {
-			throw new InvalidXMLException("The file is bad!");
+			throw new InvalidXMLException("Cannot parse the provided document.");
 		}
 	}
 
@@ -105,6 +114,7 @@ public class Loader {
 
 		data_structure = new SimulationDataStructure();
 
+		//  FIRST BUILD ALL OF THE COMPONENTS
 		try {
 			buildSystem();  //get time steps
 			buildStocks();  
@@ -117,7 +127,10 @@ public class Loader {
 			throw new InvalidXMLException("Cannot Parse all Components!");
 		}
 
+		//  NEXT LINK RELATED OBJECTS TOGETHER
 		linkDataStructure();
+		
+		//  INITILAIZE ALL FUNCTIONS.
 		initFunctions();
 		
 		return data_structure;
@@ -126,10 +139,15 @@ public class Loader {
 	/**
 	 * Loops through all functions in the data structure and initializes
 	 * the current/previous values if the function is not recursive. 
-	 * @throws InvalidXMLException 
+	 * @throws InvalidXMLException If a circular or bad initialization occurs within a 
+	 * control.
 	 */
 	private void initFunctions() throws InvalidXMLException {
+		
+		//  GET A FULL MAP OF THE DATA STRUCTURE
 		Map<String, Component> map = data_structure.getCompleteMap();
+		
+		// LOOP THROUGH ALL COMPONENTS AND INITIALIZE THE CONTROLS.
 		for (Entry<String, Component> e : map.entrySet())
 		{
 			Component current = (Component) e.getValue();
@@ -145,10 +163,11 @@ public class Loader {
 
 
 	/**
-	 * Loops through constructed {@link datamodel.SimulationDataStructure} and associates memory
-	 * references to {@link Component}s as applicable.  {@link Flow}s are associated with Sources, Sinks, and a
-	 * {@link Control}.  {@link Control}s have their function extracted and new data structures are
-	 * built to allow correct parsing and calculation of the functions.
+	 * Loops through constructed {@link datamodel.SimulationDataStructure} and associates 
+	 * memory references to {@link Component}s as applicable.  {@link Flow}s are 
+	 * associated with Sources, Sinks, and a {@link Control}.  {@link Control}s have 
+	 * their function extracted and new data structures are built to allow correct 
+	 * parsing and calculation of the functions.
 	 */
 	private void linkDataStructure()
 	{
@@ -162,8 +181,8 @@ public class Loader {
 			case Component.TYPE_FLOW:
 				//LOOKUP THE SOURCE, SINK AND CONTROL AND PASS THEM TO FLOW
 				Flow fc = (Flow) current;
-				fc.setSource(map.get(fc.getMy_src_id()));
-				fc.setSink(map.get(fc.getMy_sink_id()));
+				fc.setSource(map.get(fc.getSourceName()));
+				fc.setSink(map.get(fc.getSinkName()));
 				Control control = (Control) map.get(fc.getControlName());
 				fc.setControl(control);
 				break;
@@ -194,7 +213,7 @@ public class Loader {
 		
 		if (data_structure != null)
 		{
-			String[] token = the_control.getfunction().split("[,\\s{}]+");
+			String[] token = the_control.getFunctionText().split("[,\\s{}]+");
 			for (int i = 0; i < token.length; i++)
 			{
 				if (map.containsKey(token[i]))
@@ -208,14 +227,13 @@ public class Loader {
 			}
 			
 			the_control.setParameters(params);
-			the_control.setOperators(operators);
+			the_control.setConditionalElements(operators);
 		}
 	}
 	
 	/**
 	 * Helper method to create {@link Cloud}s and populate them into
 	 * {@link Loader#data_structure}.
-	 * @throws ValueOverflowException 
 	 */
 	private void buildClouds()
 	{
@@ -264,7 +282,7 @@ public class Loader {
 		if (sysNodes.getLength() > 0) {
 			NamedNodeMap sysInfo = sysNodes.item(0).getAttributes();
 			try {
-				timeSteps = Integer.parseInt(sysInfo.getNamedItem("timeSteps").getNodeValue());
+				timesteps = Integer.parseInt(sysInfo.getNamedItem("timeSteps").getNodeValue());
 			} catch (Exception e){
 				throw new InvalidXMLException("TimeSteps are incorrect!!!");
 			}
@@ -279,7 +297,6 @@ public class Loader {
 	/**
 	 * Helper method to create {@link Stock}s and populate them into
 	 * {@link Loader#data_structure}.
-	 * @throws ValueOverflowException 
 	 */
 	private void buildStocks()
 	{
