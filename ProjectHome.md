@@ -1,0 +1,1 @@
+This CAES simulator will allow a user to design a system using the defined XML Schema, import this configuration into the simulator along with any input data that may help feed the model.  The model will then run for the desired time frame and results we be put out to csv for analysis.
